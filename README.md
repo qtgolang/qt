@@ -1,19 +1,19 @@
 # qt
 
 > * #  封装有以下功能
->> #### JSON 
->> #### HTTP 
->> #### mysql 
->> #### 常用随机功能 
->> #### 常用字符串操作 
->> #### Gzip 
->> #### Zlib 
->> #### Socket Server 
->> #### Socket Client 
->> #### RSA 算法 
->> #### AES 算法 
->> #### DES 算法 
->> #### Hash加密 
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/Json.go">JSON</a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qthttp.go">HTTP </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtmysql.go">mysql  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtrand.go">常用随机功能  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtString.go">常用字符串操作  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/gzip.go">Gzip  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtzlib.go">Zlib  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtsocket.go">Socket Server  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtsocket.go">Socket Client  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtrsa.go">RSA 算法  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtaes.go">AES 算法  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtdes.go">DES 算法  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/hash.go">Hash加密  </a>
 
  * # JSON 示例
  ```
