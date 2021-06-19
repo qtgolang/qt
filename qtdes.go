@@ -159,7 +159,7 @@ func (qtdes *qtDes) keyFactory(key []byte) []byte {
 	}
 	return key[:8]
 }
-func ivFactory(iv []byte) []byte {
+func (qtdes *qtDes) ivFactory(iv []byte) []byte {
 	_ivLen := len(iv)
 	STMP := []byte{}
 	if _ivLen < 8 {
@@ -222,13 +222,13 @@ func (qtdes *qtDes) Encrypt(Data []byte) []byte {
 		return encryptData
 	}
 	if qtdes.encMethod ==Type_Const_AES_DES_FCB || qtdes.encMethod == Type_Const_DES_3DES_FCB {
-		blockMode := cipher.NewCFBEncrypter(block, ivFactory(qtdes.desIv))
+		blockMode := cipher.NewCFBEncrypter(block, qtdes.ivFactory(qtdes.desIv))
 		crypted := make([]byte, len(in))
 		blockMode.XORKeyStream(crypted, in)
 		return crypted
 	}
 	if qtdes.encMethod == Type_Const_AES_DES_CBC || qtdes.encMethod == Type_Const_DES_3DES_CBC {
-		blockMode := cipher.NewCBCEncrypter(block, ivFactory(qtdes.desIv))
+		blockMode := cipher.NewCBCEncrypter(block, qtdes.ivFactory(qtdes.desIv))
 		crypted := make([]byte, len(in))
 		blockMode.CryptBlocks(crypted, in)
 		return crypted
@@ -274,7 +274,7 @@ func (qtdes *qtDes) Decrypt(Data []byte) []byte {
 		return decryptData
 	}
 	if qtdes.encMethod == Type_Const_AES_DES_CBC || qtdes.encMethod == Type_Const_DES_3DES_CBC {
-		blockMode := cipher.NewCBCDecrypter(block, ivFactory(qtdes.desIv))
+		blockMode := cipher.NewCBCDecrypter(block, qtdes.ivFactory(qtdes.desIv))
 		origData := make([]byte, len(Data))
 		blockMode.CryptBlocks(origData, Data)
 		if qtdes.pacs != Type_Const_Padding_NoPadding {
@@ -283,7 +283,7 @@ func (qtdes *qtDes) Decrypt(Data []byte) []byte {
 		return origData
 	}
 	if qtdes.encMethod == Type_Const_AES_DES_FCB || qtdes.encMethod == Type_Const_DES_3DES_FCB {
-		blockMode := cipher.NewCFBDecrypter(block, ivFactory(qtdes.desIv))
+		blockMode := cipher.NewCFBDecrypter(block, qtdes.ivFactory(qtdes.desIv))
 		origData := make([]byte, len(Data))
 		blockMode.XORKeyStream(origData, Data)
 		if qtdes.pacs != Type_Const_Padding_NoPadding {

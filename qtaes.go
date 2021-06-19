@@ -208,14 +208,14 @@ func (qtaes *qtAes) Encrypt(Data []byte) []byte {
 		return encryptData
 	}
 	if qtaes.encMethod == Type_Const_AES_DES_FCB {
-		blockMode := cipher.NewCFBEncrypter(block, ivFactory(qtaes.aesIv))
+		blockMode := cipher.NewCFBEncrypter(block, qtaes.ivFactory(qtaes.aesIv))
 		crypted := make([]byte, len(in))
 		blockMode.XORKeyStream(crypted, in)
 		return crypted
 	}
 	if qtaes.encMethod == Type_Const_AES_DES_CBC {
 
-		blockMode := cipher.NewCBCEncrypter(block, ivFactory(qtaes.aesIv))
+		blockMode := cipher.NewCBCEncrypter(block, qtaes.ivFactory(qtaes.aesIv))
 		crypted := make([]byte, len(in))
 		blockMode.CryptBlocks(crypted, in)
 		return crypted
@@ -224,6 +224,16 @@ func (qtaes *qtAes) Encrypt(Data []byte) []byte {
 	return nil
 }
 
+func (qtaes *qtAes) ivFactory(iv []byte) []byte {
+	_ivLen := len(iv)
+	STMP := []byte{}
+	if _ivLen < 8 {
+		tmp := append(STMP, bytes.Repeat([]byte{byte(0)}, 16-_ivLen)...)
+		tmp = append(iv, tmp...)
+		return tmp
+	}
+	return iv[:16]
+}
 //默认PKSC#7
 //
 //Key 若为16位则加密为128
@@ -256,7 +266,7 @@ func (qtaes *qtAes) Decrypt(Data []byte) []byte {
 	}
 
 	if qtaes.encMethod == Type_Const_AES_DES_CBC {
-		blockMode := cipher.NewCBCDecrypter(block, ivFactory(qtaes.aesIv))
+		blockMode := cipher.NewCBCDecrypter(block, qtaes.ivFactory(qtaes.aesIv))
 		origData := make([]byte, len(Data))
 		blockMode.CryptBlocks(origData, Data)
 		if qtaes.pacs != Type_Const_Padding_NoPadding {
@@ -265,7 +275,7 @@ func (qtaes *qtAes) Decrypt(Data []byte) []byte {
 		return origData
 	}
 	if qtaes.encMethod == Type_Const_AES_DES_FCB {
-		blockMode := cipher.NewCFBDecrypter(block, ivFactory(qtaes.aesIv))
+		blockMode := cipher.NewCFBDecrypter(block, qtaes.ivFactory(qtaes.aesIv))
 		origData := make([]byte, len(Data))
 		blockMode.XORKeyStream(origData, Data)
 		if qtaes.pacs != Type_Const_Padding_NoPadding {
