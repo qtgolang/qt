@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 )
+var mhandle int64
+var applock sync.Mutex
 
 const (
 	收到数据 = 1
@@ -337,8 +339,10 @@ type Client struct {
 //返回一个 句柄 多线程可用来区分
 func (tcp *Client) SetAsynchronous(SetAsynchronous func(handle int64, data []byte)) int64 {
 	tcp.asynchronous = SetAsynchronous
-	var i string
-	tcp.handleID = handle(fmt.Sprintf("%d", &i) + strconv.FormatInt(time.Now().UnixNano(), 10))
+	applock.Lock()
+	mhandle++
+	tcp.handleID = mhandle
+	applock.Unlock() 
 	return tcp.handleID
 }
 
