@@ -7,17 +7,18 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"time"
 	"sync"
+	"time"
 )
-var mhandle int64
-var applock sync.Mutex
 
 const (
 	收到数据 = 1
 	客户进入 = 2
 	客户离开 = 3
 )
+
+var mhandle int64
+var applock sync.Mutex
 
 // Server .
 //
@@ -322,7 +323,7 @@ type Client struct {
 	// synchronization .
 	//
 	// 是否为异步请求
-	asynchronous    func(handle int64, data []byte)
+	asynchronous    func(handle int64, data []byte, Type int)
 	conn            net.Conn
 	err             string
 	sendTimesOut    time.Duration
@@ -337,13 +338,15 @@ type Client struct {
 //
 //在 Connect 之前调用
 //
+// 参数说明  handle 为客户端句柄 data 为收到的数据 Type为事件类型0=接收的数据 1=连接被断开 2=主动断开后收到的事件
+//
 //返回一个 句柄 多线程可用来区分
-func (tcp *Client) SetAsynchronous(SetAsynchronous func(handle int64, data []byte)) int64 {
+func (tcp *Client) SetAsynchronous(SetAsynchronous func(handle int64, data []byte, Type int)) int64 {
 	tcp.asynchronous = SetAsynchronous
 	applock.Lock()
 	mhandle++
 	tcp.handleID = mhandle
-	applock.Unlock() 
+	applock.Unlock()
 	return tcp.handleID
 }
 
@@ -368,7 +371,20 @@ func (tcp *Client) Connect(ServerIP, port string) bool {
 func (tcp *Client) receive() {
 	if tcp.asynchronous != nil {
 		for {
-			tcp.asynchronous(tcp.handleID, tcp.Receive())
+			data, err := tcp.Receive()
+			if err != nil {
+				if strings.Index(tcp.err, "An established connection was aborted by the software in your host machine") != -1 {
+					tcp.asynchronous(tcp.handleID, []byte{}, 1)
+					return
+				}
+				if strings.Index(tcp.err, "use of closed network connection") != -1 {
+					tcp.asynchronous(tcp.handleID, []byte{}, 2)
+					return
+				}
+			}
+			if len(data) > 0 {
+				tcp.asynchronous(tcp.handleID, data, 0)
+			}
 		}
 	}
 }
@@ -376,7 +392,7 @@ func (tcp *Client) receive() {
 // Receive .
 //
 // 接收数据
-func (tcp *Client) Receive() []byte {
+func (tcp *Client) Receive() ([]byte, error) {
 	buffer := make([]byte, 4096)
 	if tcp.asynchronous != nil {
 		tcp.receiveTimesOut = 1 * time.Second
@@ -387,9 +403,9 @@ func (tcp *Client) Receive() []byte {
 	n, err := tcp.conn.Read(buffer)
 	if err != nil {
 		tcp.err = err.Error()
-		return nil
+		return nil, err
 	}
-	return buffer[:n]
+	return buffer[:n], nil
 }
 
 // GetErr .
