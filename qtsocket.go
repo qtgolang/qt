@@ -330,6 +330,7 @@ type Client struct {
 	receiveTimesOut time.Duration
 	connectTimesOut time.Duration
 	handleID        int64
+	isClose         bool
 }
 
 // SetAsynchronous .
@@ -356,6 +357,7 @@ func (tcp *Client) SetAsynchronous(SetAsynchronous func(handle int64, data []byt
 //
 //默认同步,如需异步 请在 Connect 之前 调用 SetAsynchronous
 func (tcp *Client) Connect(ServerIP, port string) bool {
+	tcp.isClose = false
 	var err error
 	if tcp.connectTimesOut == 0 {
 		tcp.connectTimesOut = 15 * time.Second
@@ -419,10 +421,20 @@ func (tcp *Client) GetErr() string {
 //
 // 断开连接
 func (tcp *Client) ClientClose() {
-	err := tcp.conn.Close()
-	if err != nil {
-		tcp.err = err.Error()
+	defer func() {
+		if r := recover(); r != nil {
+			//如果连续断开两次，会报错，捕获错误。避免报错
+			return
+		}
+	}()
+	if tcp.isClose == false {
+		err := tcp.conn.Close()
+		if err != nil {
+			tcp.err = err.Error()
+		}
+		tcp.isClose = true
 	}
+
 }
 
 // SendClient .
