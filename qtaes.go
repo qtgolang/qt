@@ -29,7 +29,7 @@ type qtAes struct {
 //
 //Type_Const_AES_keySize_256
 //
-//TType_Const_AES_keySize_Auto
+//Type_Const_AES_keySize_Auto
 func (qtaes *qtAes) SetKeySize(KeySize int) {
 
 	if KeySize != Type_Const_AES_keySize_128 && KeySize != Type_Const_AES_keySize_192 && KeySize != Type_Const_AES_keySize_256 {
