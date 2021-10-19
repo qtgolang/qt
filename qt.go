@@ -139,3 +139,11 @@ func RSA() *Qtrsa {
 	tmp := new(Qtrsa)
 	return tmp
 }
+
+// File .
+//
+// New一个File实例
+func File() *QtFile {
+	tmp := new(QtFile)
+	return tmp
+}
