@@ -14,8 +14,9 @@
 >> #### <a href="https://github.com/qtgolang/qt/blob/master/qtaes.go">AES 算法  </a>
 >> #### <a href="https://github.com/qtgolang/qt/blob/master/qtdes.go">DES 算法  </a>
 >> #### <a href="https://github.com/qtgolang/qt/blob/master/hash.go">Hash加密  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtfile.go">常用文件操作  </a>
 
- * # JSON 示例
+* # JSON 示例
  ```
 package main
 
@@ -32,7 +33,7 @@ func main() {
     }
  ```
 
- * # Aes 示例 /Des 类似
+* # Aes 示例 /Des 类似
  ```
 package main
 
@@ -51,7 +52,7 @@ func main() {
     }
  ```
 
- * # Http 示例 
+* # Http 示例
  ```
 package main
 
@@ -61,7 +62,7 @@ import (
 )
 
 func main() {
-	h := qt.Newhttp()
+	h := qt.Http()
 	h.Open("GET", "https://www.baidu.com")
 	h.Send("")
 	fmt.Println(h.GetBodyAuto())

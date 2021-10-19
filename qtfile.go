@@ -1,6 +1,5 @@
 package qt
 
-import "C"
 import (
 	"bufio"
 	"io/ioutil"
@@ -28,18 +27,18 @@ func (c QtFile) CheckFileIsExist(filename string) bool {
 // Filename 文件名
 // OpenType 打开类型 1 清空后打开 2 = 如果已经存在，则在尾部添加写 3 = 如果已经存在，会覆盖写，不会清空原来的文件，而是从头直接覆盖写 4=如果已经存在，则失败
 // FileMode 其他进程权限 1=无限制 2=禁止读 3=禁止写 4=禁止读写
-func (c QtFile) Open(Filename string, OpenType, FileMode int) error {
+func (c *QtFile) Open(Filename string, OpenType, FileMode int) error {
 	_OpenType := OpenType
 	_permissions := os.FileMode(0777)
 	if _OpenType == 1 {
-		_OpenType = os.O_WRONLY | os.O_CREATE | os.O_APPEND
+		_OpenType = os.O_CREATE | os.O_APPEND | os.O_RDWR
 		c.RemoveFile(Filename)
 	} else if _OpenType == 2 {
-		_OpenType = os.O_WRONLY | os.O_CREATE | os.O_APPEND
+		_OpenType = os.O_CREATE | os.O_APPEND | os.O_RDWR
 	} else if _OpenType == 3 {
-		_OpenType = os.O_WRONLY | os.O_CREATE
+		_OpenType = os.O_CREATE
 	} else if _OpenType == 4 {
-		_OpenType = os.O_WRONLY | os.O_CREATE | os.O_EXCL
+		_OpenType = os.O_CREATE | os.O_EXCL | os.O_RDWR
 	}
 	if FileMode == 1 {
 		_permissions = 0777
@@ -58,32 +57,33 @@ func (c QtFile) Open(Filename string, OpenType, FileMode int) error {
 
 // Close
 // 关闭文件
-func (c QtFile) Close() error {
+func (c *QtFile) Close() error {
 	return c.FileNumer.Close()
 }
 
 // Write
 // 写[]byte
-func (c QtFile) Write(body []byte) error {
+func (c *QtFile) Write(body []byte) error {
 	_, err := c.FileNumer.Write(body)
 	return err
 }
 
 // WriteString
 // 写入Sting
-func (c QtFile) WriteString(Str string) error {
-	return c.Write([]byte(Str))
+func (c *QtFile) WriteString(Str string) error {
+	_, err := c.FileNumer.WriteString(Str)
+	return err
 }
 
 // WriteStringLine
 // 写一行Sting 尾部自动带\r\n
-func (c QtFile) WriteStringLine(Str string) error {
+func (c *QtFile) WriteStringLine(Str string) error {
 	return c.Write([]byte(Str + "\r\n"))
 }
 
 // ReadString
 // 读一行字符串
-func (c QtFile) ReadString() (string, error) {
+func (c *QtFile) ReadString() (string, error) {
 	line, err := c.FileReader.ReadString('\n')
 	return line, err
 }
