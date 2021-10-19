@@ -14,6 +14,7 @@
 >> #### <a href="https://github.com/qtgolang/qt/blob/master/qtaes.go">AES 算法  </a>
 >> #### <a href="https://github.com/qtgolang/qt/blob/master/qtdes.go">DES 算法  </a>
 >> #### <a href="https://github.com/qtgolang/qt/blob/master/hash.go">Hash加密  </a>
+>> #### <a href="https://github.com/qtgolang/qt/blob/master/qtfile.go">常用文件操作  </a>
 
  * # JSON 示例
  ```
