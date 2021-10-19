@@ -62,7 +62,7 @@ import (
 )
 
 func main() {
-	h := qt.Newhttp()
+	h := qt.Http()
 	h.Open("GET", "https://www.baidu.com")
 	h.Send("")
 	fmt.Println(h.GetBodyAuto())
