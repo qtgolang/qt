@@ -8,7 +8,7 @@ func String() *qtstring {
 //Winhttp 返回一个Winhttp类型
 //
 //实现GET POST 等请求
-func Newhttp() *winhttp {
+func Http() *winhttp {
 	return newWinhttp()
 }
 
@@ -120,8 +120,6 @@ func SocketClient() *Client {
 //返回一个Zlib 的实例
 //
 //现在的Zlib不能调整级别后期修改
-//
-//现在压缩结果和同盾的压缩结果一致
 func Zlib() *qtzlib {
 	return newzlib_()
 }
@@ -129,7 +127,15 @@ func Zlib() *qtzlib {
 // Rand .
 //
 //返回一个随机类
-func NewRand() *rand_ {
+func Rand() *rand_ {
 	tmp := newRand_()
+	return tmp
+}
+
+// RSA .
+//
+// New一个RSA实例
+func RSA() *Qtrsa {
+	tmp := new(Qtrsa)
 	return tmp
 }
