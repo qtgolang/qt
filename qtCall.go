@@ -4,7 +4,10 @@ package qt
 */
 import "C"
 
-
+import (
+	"unsafe"
+	"fmt"
+)
 // Call
 //
 // Call 一个内存地址 只能接收 uintptr int int8 int16 int32 int64  string []byte bool 类型
