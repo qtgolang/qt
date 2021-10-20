@@ -1,17 +1,82 @@
 package qt
 
 import (
+	"strconv"
+	"strings"
 	"time"
 )
 
 type Qttime struct {
 }
 
-// GeTimeString
+// TimeAdd
+//
+// 时间加减操作
+//
+// unit 操作的时间单位 1=年 2=月 3=日 4=时 5=分 6=秒
+//
+// val 要操作的值 例如 10 或者 -10
+func (c Qttime) TimeAdd(time1 time.Time, unit, val int) time.Time {
+	s := ""
+	switch unit {
+	case 1:
+		arr := strings.Split(c.TimeToString(time1), "-")
+		if len(arr) == 3 {
+			i, _ := strconv.Atoi(arr[0])
+			s = strconv.Itoa(i+val) + "-" + arr[1] + "-" + arr[2]
+			t1 := c.StringToTime(s)
+			return t1
+		}
+	case 2:
+		arr := strings.Split(c.TimeToString(time1), "-")
+		if len(arr) == 3 {
+			i, _ := strconv.Atoi(arr[0])
+			i2, _ := strconv.Atoi(arr[1])
+			ye := (i2 + val) % 13
+			if ye == 0 {
+				ye = 1
+			}
+			n := (i2 + val - ye) / 12
+			if ye < 10 {
+				s = strconv.Itoa(i+n) + "-0" + strconv.Itoa(ye) + "-" + arr[2]
+			} else {
+				s = strconv.Itoa(i+n) + "-" + strconv.Itoa(ye) + "-" + arr[2]
+			}
+			t1 := c.StringToTime(s)
+			return t1
+		}
+	case 3:
+		s = strconv.Itoa(val*24) + "h"
+		dd, _ := time.ParseDuration(s)
+		return time1.Add(dd)
+	case 4:
+		s = strconv.Itoa(val) + "h"
+		dd, _ := time.ParseDuration(s)
+		return time1.Add(dd)
+	case 5:
+		s = strconv.Itoa(val) + "m"
+		dd, _ := time.ParseDuration(s)
+		return time1.Add(dd)
+	case 6:
+		s = strconv.Itoa(val) + "s"
+		dd, _ := time.ParseDuration(s)
+		return time1.Add(dd)
+	}
+	return time1
+}
+
+// GetTimeString
 //
 // 获取字符串类型的时间文本 “2006-01-02 15:04:05”
-func (c Qttime) GeTimeString() string {
+func (c Qttime) GetTimeString() string {
 	t := time.Now()
+	return t.Format("2006-01-02 15:04:05")
+}
+
+// TimeToString
+//
+// 指定字符串类型的时间文本 “2006-01-02 15:04:05”
+func (c Qttime) TimeToString(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
 }
 
