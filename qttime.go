@@ -1,7 +1,6 @@
 package qt
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -39,39 +38,21 @@ func (c Qttime) TimeAdd(time1 time.Time, unit, val int) time.Time {
 			}
 			n := (i2 + val - ye) / 12
 			if ye < 10 {
-				n--
-				switch ye {
-				case -1:
-					s = strconv.Itoa(i+n) + "-11-" + arr[2]
-				case -2:
-					s = strconv.Itoa(i+n) + "-10-" + arr[2]
-				case -3:
-					s = strconv.Itoa(i+n) + "-09-" + arr[2]
-				case -4:
-					s = strconv.Itoa(i+n) + "-08-" + arr[2]
-				case -5:
-					s = strconv.Itoa(i+n) + "-07-" + arr[2]
-				case -6:
-					s = strconv.Itoa(i+n) + "-06-" + arr[2]
-				case -7:
-					s = strconv.Itoa(i+n) + "-05-" + arr[2]
-				case -8:
-					s = strconv.Itoa(i+n) + "-04-" + arr[2]
-				case -9:
-					s = strconv.Itoa(i+n) + "-03-" + arr[2]
-				case -10:
-					s = strconv.Itoa(i+n) + "-02-" + arr[2]
-				case -11:
-					s = strconv.Itoa(i+n) + "-01-" + arr[2]
-				default:
-					n++
+				if ye < 0 {
+					n--
+					ye = ye + 12
+					if ye < 10 {
+						s = strconv.Itoa(i+n) + "-0" + strconv.Itoa(ye) + "-" + arr[2]
+					} else {
+						s = strconv.Itoa(i+n) + "-" + strconv.Itoa(ye) + "-" + arr[2]
+					}
+				} else {
 					s = strconv.Itoa(i+n) + "-0" + strconv.Itoa(ye) + "-" + arr[2]
 				}
 
 			} else {
 				s = strconv.Itoa(i+n) + "-" + strconv.Itoa(ye) + "-" + arr[2]
 			}
-			fmt.Println(s, i2, val, ye, (i2 + val - ye), (i2+val-ye)/12)
 			t1 := c.StringToTime(s)
 			return t1
 		}
