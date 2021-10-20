@@ -13,6 +13,7 @@ type QtFile struct {
 }
 
 //CheckFileIsExist
+//
 // 判断文件是否存在  存在返回 true 不存在返回false
 func (c QtFile) CheckFileIsExist(filename string) bool {
 	var exist = true
@@ -23,9 +24,13 @@ func (c QtFile) CheckFileIsExist(filename string) bool {
 }
 
 // Open
-//  打开一个文件 成功返回 nil
+//
+// 打开一个文件 成功返回 nil
+//
 // Filename 文件名
+//
 // OpenType 打开类型 1 清空后打开 2 = 如果已经存在，则在尾部添加写 3 = 如果已经存在，会覆盖写，不会清空原来的文件，而是从头直接覆盖写 4=如果已经存在，则失败
+//
 // FileMode 其他进程权限 1=无限制 2=禁止读 3=禁止写 4=禁止读写
 func (c *QtFile) Open(Filename string, OpenType, FileMode int) error {
 	_OpenType := OpenType
@@ -56,6 +61,7 @@ func (c *QtFile) Open(Filename string, OpenType, FileMode int) error {
 }
 
 // Close
+//
 // 关闭文件
 func (c *QtFile) Close() error {
 	return c.FileNumer.Close()
@@ -69,6 +75,7 @@ func (c *QtFile) Write(body []byte) error {
 }
 
 // WriteString
+//
 // 写入Sting
 func (c *QtFile) WriteString(Str string) error {
 	_, err := c.FileNumer.WriteString(Str)
@@ -82,25 +89,41 @@ func (c *QtFile) WriteStringLine(Str string) error {
 }
 
 // ReadString
+//
 // 读一行字符串
 func (c *QtFile) ReadString() (string, error) {
 	line, err := c.FileReader.ReadString('\n')
+	if len(line) < 1 {
+		return line, err
+	}
+	if line[len(line)-1:] == "\n" {
+		line = line[:len(line)-1]
+	}
+	if len(line) < 1 {
+		return line, err
+	}
+	if line[len(line)-1:] == "\r" {
+		line = line[:len(line)-1]
+	}
 	return line, err
 }
 
 // WriteStringtoFile
+//
 // 写字符串到文件
 func (c QtFile) WriteStringtoFile(Text, Filename string) error {
 	return c.WriteBytestoFile([]byte(Text), Filename)
 }
 
 // RemoveFile
+//
 // 删除文件
 func (c QtFile) RemoveFile(Filename string) error {
 	return os.Remove(Filename)
 }
 
 // WriteBytestoFile
+//
 // 写[]byte到文件
 func (c QtFile) WriteBytestoFile(bytes []byte, Filename string) error {
 	var f *os.File
@@ -128,6 +151,7 @@ func (c QtFile) WriteBytestoFile(bytes []byte, Filename string) error {
 }
 
 // ReadFileString
+//
 // 读入文件并转为String
 func (c QtFile) ReadFileString(Filename string) string {
 	name := strings.ReplaceAll(Filename, "\"", "")
@@ -139,6 +163,7 @@ func (c QtFile) ReadFileString(Filename string) string {
 }
 
 // ReadFilebytes
+//
 // 读入文件返回字节数组
 func (c QtFile) ReadFilebytes(Filename string) []byte {
 	name := strings.ReplaceAll(Filename, "\"", "")
@@ -150,12 +175,14 @@ func (c QtFile) ReadFilebytes(Filename string) []byte {
 }
 
 // CreateDirAll
+//
 // 创建目录 例如d:\1\2\3\4 只需要 D 盘存在即可
 func (c QtFile) CreateDirAll(Filename string) error {
 	return os.MkdirAll(Filename, 0777)
 }
 
 // CreateDir
+//
 // 创建目录 例如d:\1\2\3\4   目录 d:\1\2\3\ 必须存在
 func (c QtFile) CreateDir(Filename string) error {
 	return os.Mkdir(Filename, 0777)

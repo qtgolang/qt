@@ -13,7 +13,9 @@ type rand_ struct {
 	Rand *rand.Rand
 }
 
-//AndrodidSdkVersion 随机获取 安卓版本信息
+//AndrodidSdkVersion
+//
+//随机获取 安卓版本信息
 func (qtrand *rand_) AndrodidSdkVersion() (安卓版本 string, 安卓级别 int, 版本号 string) {
 	arr := strings.Split("8.1.0|8.0.0|7.1.2|7.1.1|7.1.0|7.0.0|6.0.1|6.0.0|5.1.1|5.1.0|5.0.2|5.0.1|5.0.0|4.4.4|4.4.3|4.4.2|4.4.1|4.4|4.3.1|4.3|4.2.2|4.2.1|4.2|4.1.2|4.1.1|4.0.4|4.0.3|4.0.2|4.0.1", "|")
 	安卓版本 = arr[qtrand.RandoMnumber(0, len(arr)-1)]
@@ -151,14 +153,18 @@ func (qtrand *rand_) Char(num int) string {
 	return qtrand.srand(num, tmp)
 }
 
-// GetTimeUnix 获取当前时间戳 参数若为 true 获取10 位的时间戳，否则为13位时间戳
+// GetTimeUnix
+//
+//获取当前时间戳 参数若为 true 获取10 位的时间戳，否则为13位时间戳
 func (qtrand *rand_) GetTimeUnix(val bool) int64 {
 	if val {
 		return time.Now().UnixNano() / 1000 / 1000 / 1000
 	}
 	return time.Now().UnixNano() / 1000 / 1000
 }
-// TimeStrToTimeUnix 指定时间到时间戳 10位
+// TimeStrToTimeUnix
+//
+//指定时间到时间戳 10位
 func (qtrand *rand_) TimeStrToTimeUnix(times string) int64 {
 
 	formatTime,err:=time.Parse("2006-01-02 15:04:05",times)
