@@ -9,6 +9,28 @@ import (
 type Qttime struct {
 }
 
+//Sleep
+//
+// 延迟毫秒数
+func (c Qttime) Sleep(Millisecond int) {
+	time.Sleep(time.Millisecond * time.Duration(Millisecond))
+}
+
+// TimeDiff
+//
+//TimeDiff 取两个时间的时间差
+func (c Qttime) TimeDiff(time1, time2 time.Time) time.Duration {
+	v := time1.Unix() - time2.Unix()
+	return time.Duration(v) * time.Second
+}
+
+// StringTimeDiff
+//
+//StringTimeDiff 取两个字符串时间文本的时间差  “2006-01-02 15:04:05”
+func (c Qttime) StringTimeDiff(time1, time2 string) time.Duration {
+	return c.TimeDiff(c.StringToTime(time1), c.StringToTime(time2))
+}
+
 // TimeAdd
 //
 // 时间加减操作
