@@ -1,4 +1,4 @@
-package main
+package httpAmiddleman
 
 import (
 	"amiddleman/GoIyov"
@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -49,7 +50,7 @@ func (handler *Handler) BeforeResponse(entity *entity.Entity, err error) {
 }
 func (handler *Handler) ErrorLog(err error) {}
 
-var _rootCa = `-----BEGIN CERTIFICATE-----
+var RootCa = `-----BEGIN CERTIFICATE-----
 MIIDizCCAnOgAwIBAgIUKZuAsiiXCMz613rrURfxAHNuU7YwDQYJKoZIhvcNAQEL
 BQAwVDELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkJKMQswCQYDVQQHDAJCSjENMAsG
 A1UECgwEbGl2ZTENMAsGA1UECwwEUk9PVDENMAsGA1UEAwwEUk9PVDAgFw0yMTEw
@@ -71,7 +72,7 @@ jflL/BPXbo2I6AUSIZBYP+sjlDugttxtm7dao61fiMREkd5sgFhFi1b7HAETESKs
 YuUTLN7fP7MUIOy+1cf+uX8STUTUz5tmu4eH6NiG4+HVdQHWQ0fI/3RoZmvghOg=
 -----END CERTIFICATE-----
 `
-var _rootKey = `-----BEGIN RSA PRIVATE KEY-----
+var RootKey = `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAwj4JNBKIWV7DSLkivQ5zMOe5ycdsKgIRvmbfHdXIf4oUA91z
 wOW2QROVKW8ptxwLcbhObwhDSU30akV6mpt3/7Tq+GJmD41TXSGhcU/umTcvCesF
 cUdIcA33TL/tEQ/XA9F0NSCUjpYkq8RqKVld02ByH4dM1cOVukArK2pF7ab+l3Op
@@ -100,10 +101,26 @@ EkvK5BlNCpvFCO8TKImcB/g4v8R7FNxmM4tUE1HJzSym4jbiaWtf8w==
 -----END RSA PRIVATE KEY-----
 `
 
-func main() {
-	proxy := GoIyov.NewWithDelegate(&Handler{}, _rootCa, _rootKey)
+func testmain() {
+	proxy := GoIyov.NewWithDelegate(&Handler{}, RootCa, RootKey)
 	server := &http.Server{
 		Addr: ":8880",
+		Handler: http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+			proxy.ServerHandler(rw, req)
+		}),
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
+	err := server.ListenAndServe()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func Stat(prot int, delegate GoIyov.Delegate, certCa, certKey string) {
+	proxy := GoIyov.NewWithDelegate(delegate, certCa, certKey)
+	server := &http.Server{
+		Addr: ":" + strconv.Itoa(prot),
 		Handler: http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 			proxy.ServerHandler(rw, req)
 		}),
