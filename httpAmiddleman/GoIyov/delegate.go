@@ -1,7 +1,7 @@
 package GoIyov
 
 import (
-	"github.com/nicecp/GoIyov/entity"
+	"amiddleman/GoIyov/entity"
 )
 
 type Delegate interface {

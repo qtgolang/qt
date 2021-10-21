@@ -1,13 +1,13 @@
 package GoIyov
 
 import (
+	"amiddleman/GoIyov/cert"
+	"amiddleman/GoIyov/conn"
+	"amiddleman/GoIyov/entity"
 	"context"
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"github.com/nicecp/GoIyov/cert"
-	"github.com/nicecp/GoIyov/conn"
-	"github.com/nicecp/GoIyov/entity"
 	"github.com/pkg/errors"
 	"net"
 	"net/http"
@@ -32,9 +32,10 @@ var (
 )
 
 var serverCertFlag = flag.Bool("cert", false, "安装server证书,默认不安装")
+
 type Proxy struct {
 	delegate Delegate
-	dns *Dns
+	dns      *Dns
 }
 
 func init() {
@@ -43,13 +44,15 @@ func init() {
 		if err := cert.AddTrustedCert(); err != nil {
 			panic(err)
 		}
+		fmt.Println("证书安装成功")
 	}
 }
 func New() *Proxy {
-	return &Proxy{delegate: &DefaultDelegate{},dns: &DefaultDns}
+	return &Proxy{delegate: &DefaultDelegate{}, dns: &DefaultDns}
 }
 
-func NewWithDelegate(delegate Delegate) *Proxy {
+func NewWithDelegate(delegate Delegate, rootCa, rootKey string) *Proxy {
+	cert.Init(rootCa, rootKey)
 	return &Proxy{delegate: delegate, dns: &DefaultDns}
 }
 

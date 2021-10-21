@@ -1,6 +1,7 @@
 package cert
 
 import (
+	"amiddleman/GoIyov/cache"
 	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
@@ -9,7 +10,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"fmt"
-	"github.com/nicecp/GoIyov/cache"
 	"github.com/pkg/errors"
 	"math/big"
 	"net"
@@ -24,65 +24,14 @@ var (
 	rootKey *rsa.PrivateKey   // 证书私钥
 )
 
-var (
-	_rootCa = []byte(`-----BEGIN CERTIFICATE-----
-MIIDiTCCAnGgAwIBAgIUE/FkeKfrKhOspQrqC6eu5hAx0jwwDQYJKoZIhvcNAQEL
-BQAwUzELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkJKMQswCQYDVQQHDAJCSjEMMAoG
-A1UECgwDcGxlMQ0wCwYDVQQLDARsaXZlMQ0wCwYDVQQDDARSb290MCAXDTIxMTAy
-MDA5MzQwNloYDzIxMjEwOTI2MDkzNDA2WjBTMQswCQYDVQQGEwJDTjELMAkGA1UE
-CAwCQkoxCzAJBgNVBAcMAkJKMQwwCgYDVQQKDANwbGUxDTALBgNVBAsMBGxpdmUx
-DTALBgNVBAMMBFJvb3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD3
-PRGH6mwE7G+txkcM1OLN+o/RcY4syZtdPjhN1Kw26u4XIOttv9Bm26unh9PpTUWf
-SeD0+U5/Dd8xFignLKbzcs69gNT64wHQfJSX5Fu+jgldXAvjes9hQs4jKnDDdXpb
-FN779bKIddjBVKVEvXaSwXgZIq+kqP+QecBTXhFqEbHhqyzbvJE0at+u9NPaDX23
-nZF9jwRNuuuufBf7dcCqjGHBUbeXZNmePeW6Qm3T4+zMP6kSNqV7q2exPA82zWAe
-+cQLtls417ksyrRhopCzA1tuwk9BRr5S3AlNLrX3dlVYXzRK70KDYcGb3uYxPcWq
-x7DfnxG3czyF4RClEkr/AgMBAAGjUzBRMB0GA1UdDgQWBBSCsoTDDBvKhKnYRDCM
-mVDpOWONjDAfBgNVHSMEGDAWgBSCsoTDDBvKhKnYRDCMmVDpOWONjDAPBgNVHRMB
-Af8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQDVaKjuAbwdcQEZ262TJuYKSvcY
-uPWQPWq8zVp+EZxJVGiPJwuISdjK9rE8QZGdeuoeilBvmbL6k2ETq4K+y2GmEEpC
-2dsj9nwflRDxFVQsRBA/6JAWA0+YUY3MRWKdfTux5f7m5RBGiGCtJAbBuh/ZitA9
-xujXOa3qn1XZfqVPUdSQiV/A43/jo1rDCn0j539DILO7brIpRslpWSeGymt7ODQC
-GnNoekL1c7h9uX9g3xkdbhkgdhh6eG58suzRsVoCsbCj3w/3QRdoUefzsw2cpkpF
-wd/miJevRR8ncgc7RwUavkS/boGPWUixso88d5RSeqbAv6BR7VG13EO/Ydoz
------END CERTIFICATE-----
-`)
-	_rootKey = []byte(`-----BEGIN RSA PRIVATE KEY-----
-MIIEpQIBAAKCAQEA9z0Rh+psBOxvrcZHDNTizfqP0XGOLMmbXT44TdSsNuruFyDr
-bb/QZturp4fT6U1Fn0ng9PlOfw3fMRYoJyym83LOvYDU+uMB0HyUl+Rbvo4JXVwL
-43rPYULOIypww3V6WxTe+/WyiHXYwVSlRL12ksF4GSKvpKj/kHnAU14RahGx4ass
-27yRNGrfrvTT2g19t52RfY8ETbrrrnwX+3XAqoxhwVG3l2TZnj3lukJt0+PszD+p
-Ejale6tnsTwPNs1gHvnEC7ZbONe5LMq0YaKQswNbbsJPQUa+UtwJTS6193ZVWF80
-Su9Cg2HBm97mMT3Fqsew358Rt3M8heEQpRJK/wIDAQABAoIBAQCzKPLCPjLGopsP
-HyaverlcMBz11kcD15iZShQ8+kdNiJK9+eIA5sXbM4ZBYaFDZ/ZyxnOYseybD29U
-P80bDjVxJxn/oxMzNztCXHTFWPrOrFjG6YPH9V/ACEwemYubaE8hH4+yn8ofLt7C
-wlb86Bq7oC0qccM8HCcOB9xBzWHrLLjN+Y5zJWFaJPUVY1vsNmZMorAOHzygLG8F
-QJNaX1GGRXZSFtmPTvKEJSxigEwj3RRPVDePFHP4biViGXgNHR2tHB64Um4qef4z
-ZbMdLbfodLAUTwL/D8Fc9Q3g4BuA/VMLPNV0XOmzHoYUHQjuxvfxtLeMPjCWnE/s
-+TlrQ+q5AoGBAPyx+jzG/ccPcpW3h8Qd2Jaj7K73rqN45ZqyX8TSBDFX8Qd/Oooz
-aA3+K6FN8/3LWnvz5QwXvhQ1xeph/riMc6ssA9jQrqL1C9TkgXZHShqJivuiKzu0
-i36k4R38QZMnl7UiQ7MNZN0e5TgZ8k0i2KufCK7aPDyVdvZOW9RBhhNjAoGBAPp4
-0nK/jKZi7TMPeHt0rEyiNzkZyOHnkf+xRAtNLdALDbFLpwDEZ499COlzDpgz06ab
-lCQjWNa4Kz5WISPZ+ty5bG9p9uH0lnD6QlyPU1nVgTCvr5GynJ4fZNfjn5Hygodv
-ATjyiQgsrW7pq0fviO2wcvqevz+D54HYUW+/MfK1AoGBAJZYDdo7SqI0vqf1GgHF
-ACggP6GaG32HYJQ5rGEd0wDIoc8kE2BGVZJ9ttex2YkWhC9bXNtlBOJhW++nfjWu
-2uLsvR0yi7TIttFjYuNMZvqC+v3b7n0HXjdrQcTlYN58n/ZU/JJ7VZd52kcWqOLb
-6K2zYScnEM+63ZyN4nTWxz6hAoGAFODzcftDpy8B5Mq6WVgtcKno/oqGs0YRZoYJ
-TQPe+MOjHY9X2XmFxHFAx+z+X3Oahf3cCHMl2ag6epTFaG6oObP/NP5ZRRaVX8+M
-rpiH8yoX/c33Tabc5VVqm5Bu4cScWtvG909IWvUWc/NogrOV73JQ81E+UfYV2z4D
-89O1Py0CgYEA5B9ec0WAQGZMSATwzMZfjjP9xPxwmaNpFhJEW2E3IlSfeyFxhh0S
-jmsJX9MzML6wc7PcCvN5xLkPaHz7l1Vgz8x/gg264voQXwUp96iEl2U5QI7FYcK4
-G5wZBLTO7tMXhsqOOLou2Px+k09iYAxgeF1DlNqpAy2JulkKhidT9DE=
------END RSA PRIVATE KEY-----
-
-`)
-)
-
 var certCache *cache.Cache
+var RootKey []byte
+var RootCa []byte
 
-func init() {
+func Init(rootCa, rootKey string) {
+	RootCa = []byte(rootCa)
+	RootKey = []byte(rootKey)
 	certCache = cache.NewCache()
-
 	if err := loadRootCa(); err != nil {
 		panic(err)
 	}
@@ -161,7 +110,7 @@ func generateKeyPair() (*rsa.PrivateKey, error) {
 
 // 加载根证书
 func loadRootCa() error {
-	p, _ := pem.Decode(_rootCa)
+	p, _ := pem.Decode(RootCa)
 	var err error
 	rootCa, err = x509.ParseCertificate(p.Bytes)
 	if err != nil {
@@ -173,7 +122,7 @@ func loadRootCa() error {
 
 // 加载根Private Key
 func loadRootKey() error {
-	p, _ := pem.Decode(_rootKey)
+	p, _ := pem.Decode(RootKey)
 	var err error
 	rootKey, err = x509.ParsePKCS1PrivateKey(p.Bytes)
 	if err != nil {
@@ -185,7 +134,7 @@ func loadRootKey() error {
 
 // 获取证书原内容
 func GetCaCert() []byte {
-	return _rootCa
+	return RootCa
 }
 
 // 添加信任跟证书至钥匙串
@@ -195,8 +144,7 @@ func AddTrustedCert() error {
 		return err
 	}
 
-	fileName := dir + "/caRootCert.crt"
-	fmt.Println(fileName)
+	fileName := dir + "/caRoot.crt"
 	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
 		return err
@@ -204,14 +152,14 @@ func AddTrustedCert() error {
 	defer os.Remove(fileName)
 	defer file.Close()
 
-	file.Write(_rootCa)
+	file.Write(RootCa)
 
 	var command string
 	switch runtime.GOOS {
 	case "darwin":
 		command = fmt.Sprintf("sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain %s", fileName)
 	case "windows":
-		command = fmt.Sprintf("certutil -addstore -f \"ROOT\" %s", fileName)
+		command = fmt.Sprintf("certutil -addstore -f \"ROOT\" %s", dir+"\\caRoot.crt")
 	default:
 		return errors.New("仅支持MaxOS/Windows系统")
 	}
@@ -221,6 +169,17 @@ func AddTrustedCert() error {
 
 // 执行shell命令
 func shell(command string) error {
+	if runtime.GOOS == "windows" {
+		cmd := exec.Command("cmd", "-c", command)
+		var out bytes.Buffer
+		cmd.Stdout = &out
+		cmd.Stderr = os.Stderr
+		err := cmd.Start()
+		if err != nil {
+			return errors.Wrap(err, "")
+		}
+		return errors.Wrap(cmd.Wait(), out.String())
+	}
 	cmd := exec.Command("sh", "-c", command)
 	var out bytes.Buffer
 	cmd.Stdout = &out
