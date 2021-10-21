@@ -1,4 +1,4 @@
-package httpAmiddleman
+package amiddleman
 
 import (
 	"amiddleman/GoIyov"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-//package httpAmiddleman
+//package amiddleman
 type Handler struct {
 }
 
