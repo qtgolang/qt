@@ -1,7 +1,7 @@
 package GoIyov
 
 import (
-	"amiddleman/GoIyov/entity"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/entity"
 )
 
 type Delegate interface {

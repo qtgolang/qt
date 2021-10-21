@@ -1,9 +1,9 @@
 package GoIyov
 
 import (
-	"amiddleman/GoIyov/cert"
-	"amiddleman/GoIyov/conn"
-	"amiddleman/GoIyov/entity"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/cert"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/conn"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/entity"
 	"context"
 	"crypto/tls"
 	"flag"

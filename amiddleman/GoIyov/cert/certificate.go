@@ -1,7 +1,7 @@
 package cert
 
 import (
-	"amiddleman/GoIyov/cache"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/cache"
 	"bytes"
 	"crypto/rand"
 	"crypto/rsa"

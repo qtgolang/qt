@@ -2,7 +2,7 @@ package cache
 
 import (
 	"crypto/tls"
-	"amiddleman/GoIyov/singleflight"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/singleflight"
 	"sync"
 )
 

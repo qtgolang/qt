@@ -1,8 +1,8 @@
 package amiddleman
 
 import (
-	"amiddleman/GoIyov"
-	"amiddleman/GoIyov/entity"
+	"github.com/qtgolang/qt/amiddleman/GoIyov"
+	"github.com/qtgolang/qt/amiddleman/GoIyov/entity"
 	"bytes"
 	"fmt"
 	"net/http"
