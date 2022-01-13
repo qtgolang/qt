@@ -446,8 +446,8 @@ func newWinhttp() *winhttp {
 	tmp.timesConnect = 15 * time.Second   //默认连接超时15秒
 	tmp.timesSend = 15 * time.Second      //默认发送超时15秒
 	tmp.timesReceive = 30 * time.Second   //默认响应时间
-	tmp.head = make(map[string]string)    //初始化map,这里我没懂，为什么要这样写才不会报错，tmp.head,明明已经定义了类型
-	tmp.head2 = make(map[string]string)   //初始化map,这里我没懂，为什么要这样写才不会报错，tmp.head,明明已经定义了类型
-	tmp.cookies = make(map[string]string) //初始化map,这里我没懂，为什么要这样写才不会报错，tmp.head,明明已经定义了类型
+	tmp.head = make(map[string]string)
+	tmp.head2 = make(map[string]string)
+	tmp.cookies = make(map[string]string)
 	return tmp
 }
